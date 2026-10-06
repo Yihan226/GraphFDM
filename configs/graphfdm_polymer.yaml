@@ -1,0 +1,63 @@
+method: graphfdm_polymer
+run_name: graphfdm_polymer
+output_dir: ${oc.env:GRAPHFDM_OUTPUT_ROOT}/polymer/graphfdm
+init_graph_checkpoint: ${oc.env:GRAPHFDM_SFT_CHECKPOINT}
+base_config: ${oc.env:GRAPHFDM_SFT_CONFIG}
+
+general:
+  gpus: 1
+
+wandb:
+  project: graphfdm
+  name: graphfdm_polymer
+  mode: disabled
+
+online:
+  num_rounds: 10
+  k: 32
+  split: train
+  seed: 0
+
+trust_region:
+  marginal_kl: 0.035
+  conditional_kl: 0.035
+  initial_eta_n: 0.5
+  initial_eta_s: 1.0
+
+collection:
+  epsilon: 0.1
+  batch_size: 256
+  oracle_batch_size: 4096
+
+sampling:
+  guide_scale: 1.0
+  diffusion_steps: null
+
+controller:
+  hidden_dim: 64
+  node_embedding_dim: 16
+
+graph_train:
+  epochs_per_round: 20
+  batch_size: 256
+  lr: 2.0e-6
+  clip_grad: 1.0
+  weight_decay: 1.0e-12
+  seed: 0
+
+controller_train:
+  epochs_per_round: 20
+  batch_size: 1024
+  lr: 1.0e-4
+  clip_grad: 1.0
+  weight_decay: 1.0e-5
+  seed: 0
+
+eval:
+  compute_distribution_metrics: true
+  val_seed: 0
+  val_total_samples: 107
+  test_seed: 0
+  test_total_samples: 109
+  batch_size: 256
+  oracle_batch_size: 4096

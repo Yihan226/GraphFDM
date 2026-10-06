@@ -1,0 +1,13 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.hydra/
+outputs/
+data/evaluator/
+data/molecule/raw/
+data/molecule/source/
+data/molecule/manifests/
+data/polymer/raw/
+*.ckpt
+*.pt
+wandb/

@@ -1,0 +1,76 @@
+general:
+  name: polymer_sft
+  wandb: disabled
+  wandb_project: graphfdm
+  gpus: 1
+  resume: null
+  pt_checkpoint: ${oc.env:GRAPHFDM_PT_CHECKPOINT}
+  test_only: null
+  train_method: pt_conditional
+  validation_sampling: true
+  test_after_fit: false
+  sample_every_val: 15
+  samples_to_generate: 512
+  samples_to_save: 0
+  chains_to_save: 0
+  log_every_steps: 50
+  number_chain_steps: 8
+  final_model_samples_to_generate: 5000
+  final_model_samples_to_save: 0
+  final_model_chains_to_save: 0
+  enable_progress_bar: true
+  checkpoint_monitor: avg_mae
+  checkpoint_mode: min
+  checkpoint_save_top_k: 1
+  checkpoint_save_last: true
+  checkpoint_filename: "{epoch}"
+
+model:
+  type: discrete
+  transition: marginal
+  diffusion_steps: 500
+  diffusion_noise_schedule: cosine
+  guide_scale: 1.0
+  hidden_size: 1024
+  depth: 12
+  num_heads: 16
+  mlp_ratio: 4
+  drop_condition: 0.0
+  lambda_train: [1, 1, 1]
+  ensure_connected: true
+
+train:
+  n_epochs: 10000
+  batch_size: 128
+  lr: 2.0e-5
+  clip_grad: 0.1
+  num_workers: 0
+  weight_decay: 1.0e-12
+  seed: 0
+  val_check_interval: null
+  check_val_every_n_epoch: 50
+
+dataset:
+  data: polymer
+  data_dir: ${oc.env:GRAPHFDM_DATA_ROOT}
+  tokenizer_dir: ${oc.env:GRAPHFDM_ROOT}/assets/tokenizers/polymer
+  meta_source: pretrain
+  split_seed: 42
+  train_fraction: 0.6094032549728752
+  val_fraction: 0.19349005424954793
+  test_fraction: 0.19710669077757686
+  split_manifest_path: ${oc.env:GRAPHFDM_DATA_ROOT}/polymer/split_337_107_109_seed42.json
+  pin_memory: false
+
+objectives:
+  tasks: [O2, N2, CO2]
+  include_sascore: true
+  weights: [1, 1, 1, 1]
+  value_normalization: per_column_zscore
+  normalization_stats_path: ${oc.env:GRAPHFDM_DATA_ROOT}/polymer/raw/O2_N2_CO2.stats.json
+
+hydra:
+  job:
+    chdir: true
+  run:
+    dir: ${oc.env:GRAPHFDM_OUTPUT_ROOT}/polymer/sft
